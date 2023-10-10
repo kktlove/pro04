@@ -1,0 +1,710 @@
+1) pom.xml 작성
+필요한 라이브러리 추가 등록하고, 
+아래와 같이 반드시 xml을 java로 작성한다는 설정을 해야함.
+    <plugins>
+      <!---- 중략 ---->
+      <!-- xml을 java로 설정 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.2.3</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+<!---- 중략 ---->
+    </plugins>
+
+
+
+2) src/main/webapp/WEB-INF/web.xml을 삭제하고, kr.ed.haebeop.config.WebConfig.java 작성
+package kr.ed.haebeop.config;
+
+import kr.ed.haebeop.exception.UncheckException;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+import javax.servlet.Filter;
+import java.util.Properties;
+//web.xml을 대신하는 WebConfig : kr.ed.haebeop.config
+@Configuration
+@EnableWebMvc
+@ComponentScan(basePackages = {"kr.ed.haebeop"})
+public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
+    @Override
+    protected Class<?>[] getRootConfigClasses() {
+        return new Class[] { RootConfig.class, SecurityConfig.class };
+    }
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class[] { ServletContext.class };
+    }
+    @Override
+    protected String[] getServletMappings() {
+        return new String[] {"/"};
+    }
+    @Override
+    protected Filter[] getServletFilters() {
+        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+        characterEncodingFilter.setEncoding("UTF-8");
+        characterEncodingFilter.setForceEncoding(true);
+        return new Filter[] { characterEncodingFilter };
+    }
+
+    /* Exception Resolver를 설정 */
+    @Bean
+    public SimpleMappingExceptionResolver getExceptionResolver() {
+        SimpleMappingExceptionResolver smer = new SimpleMappingExceptionResolver();
+        smer.setDefaultErrorView("/common/error/error");        // 지정되지 않은 예외에 대한 기본 에러페이지 입니다.
+        smer.setDefaultStatusCode(200);        // 상태코드 맵핑이 없는 예외를 위한 기본 상태값 입니다.
+        smer.setExceptionAttribute("exception");// 기본값이 "exception" 입니다. 예외 모돌 속성의 키값입니다. ${exception.message}
+        smer.setExcludedExceptions(UncheckException.class);// 하나 또는 그 이상의 예외를 리졸버에서 제외합니다. 제외된 예외는 web.xml에서 지정된 값이 적용됩니다.
+        Properties mappings = new Properties();        // 예외 클래스에 대해 에러 페이지를 지정합니다.
+        mappings.setProperty("kr.ed.haebeop.exception.DatabaseException", "/common/error/databaseError");
+        mappings.setProperty("kr.ed.haebeop.exception.SecurityException", "/common/error/securityError");
+        mappings.setProperty("kr.ed.haebeop.exception.exception.BusinessException", "/common/error/businessError");
+        mappings.setProperty("kr.ed.haebeop.exception.exception.AjaxException", "/common/error/ajaxError");
+        smer.setExceptionMappings(mappings);
+        Properties statusCodes = new Properties();  // 에러페이지에 상태코드를 지정합니다.
+        statusCodes.setProperty("/common/error/databaseError", "500");
+        statusCodes.setProperty("/common/error/securityError", "403");
+        statusCodes.setProperty("/common/error/businessError", "200");
+        statusCodes.setProperty("/common/error/ajaxError", "200");
+        smer.setStatusCodes(statusCodes);
+        return smer;
+    }
+    //자세한 내용은 가장 밖에 있는 WebContextConfig.java를 참조하여 오류 처리할 것.
+
+}
+
+
+
+
+3) kr.ed.haebeop.config.ServletContext.java 작성
+package kr.ed.haebeop.config;
+//dispatcher-servlet.xml을 대신하는 ServletContext.java
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+//dispatcher-servlet.xml을 대신하는 ServletContext.java : kr.ed.haebeop.config
+@Configuration
+@EnableWebMvc
+@ComponentScan(basePackages = {"kr.ed.haebeop"})
+public class ServletContext implements WebMvcConfigurer {
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+        InternalResourceViewResolver bean = new InternalResourceViewResolver();
+        bean.setViewClass(JstlView.class);
+        bean.setPrefix("/WEB-INF/views/");
+        bean.setSuffix(".jsp");
+        registry.viewResolver(bean);
+    }
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+        registry.addResourceHandler("/admin/**").addResourceLocations("/WEB-INF/views/admin");
+        registry.addResourceHandler("/ajax/**").addResourceLocations("/WEB-INF/views/ajax");
+        registry.addResourceHandler("/api/**").addResourceLocations("/WEB-INF/views/api");
+        registry.addResourceHandler("/board/**").addResourceLocations("/WEB-INF/views/board");
+        registry.addResourceHandler("/calendar/**").addResourceLocations("/WEB-INF/views/calendar");
+        registry.addResourceHandler("/chat/**").addResourceLocations("/WEB-INF/views/chat");
+        registry.addResourceHandler("/check/**").addResourceLocations("/WEB-INF/views/check");
+        registry.addResourceHandler("/common/**").addResourceLocations("/WEB-INF/views/common");
+        registry.addResourceHandler("/fileupload/**").addResourceLocations("/WEB-INF/views/fileupload");
+        registry.addResourceHandler("/free/**").addResourceLocations("/WEB-INF/views/free");
+        registry.addResourceHandler("/guestbook/**").addResourceLocations("/WEB-INF/views/guestbook");
+        registry.addResourceHandler("/include/**").addResourceLocations("/WEB-INF/views/include");
+        registry.addResourceHandler("/member/**").addResourceLocations("/WEB-INF/views/member");
+        registry.addResourceHandler("/notice/**").addResourceLocations("/WEB-INF/views/notice");
+        registry.addResourceHandler("/qna/**").addResourceLocations("/WEB-INF/views/qna");
+        registry.addResourceHandler("/reserv/**").addResourceLocations("/WEB-INF/views/reserv");
+        registry.addResourceHandler("/lect/**").addResourceLocations("/WEB-INF/views/lect");
+        registry.addResourceHandler("/test/**").addResourceLocations("/WEB-INF/views/test");
+        registry.addResourceHandler("/util/**").addResourceLocations("/WEB-INF/views/util");
+    }
+}
+//WEB-INF/views 디렉토리에 ServletContext에서 지정한 디렉토리를 모두 생성할 것.
+
+
+
+4) resources 디렉토리 안에 log4j.xml, log4back.xml, log4jdbc.log4j2.properties 작성
+log4j.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<log4j:configuration>
+    <!-- Appenders -->
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%-5p: %c - %m%n" />
+        </layout>
+    </appender>
+
+    <logger name="kr.ed.haebeop.config">
+        <level value="info" />
+    </logger>
+
+    <logger name="kr.ed.haebeop.controller">
+        <level value="info" />
+    </logger>
+
+    <logger name="kr.ed.haebeop.domain">
+        <level value="info" />
+    </logger>
+
+    <logger name="kr.ed.haebeop.exception">
+        <level value="info" />
+    </logger>
+
+    <logger name="kr.ed.haebeop.persistence">
+        <level value="info" />
+    </logger>
+
+    <logger name="kr.ed.haebeop.repository">
+        <level value="info" />
+    </logger>
+
+    <logger name="kr.ed.haebeop.service">
+        <level value="info" />
+    </logger>
+
+    <logger name="kr.ed.haebeop.util">
+        <level value="info" />
+    </logger>
+
+    <logger name="kr.ed.haebeop.test">
+        <level value="info" />
+    </logger>
+
+    <logger name="kr.ed.haebeop.web">
+        <level value="info" />
+    </logger>
+
+    <logger name="kr.ed.haebeop">
+        <level value="info" />
+    </logger>
+
+    <logger name="org.springframework.core">
+        <level value="info" />
+    </logger>
+    <logger name="org.springframework.beans">
+        <level value="info" />
+    </logger>
+    <logger name="org.springframework.context">
+        <level value="info" />
+    </logger>
+    <logger name="org.springframework.web">
+        <level value="info" />
+    </logger>
+
+    <root>
+        <priority value="warn"/>
+        <appender-ref ref="console"/>
+    </root>
+</log4j:configuration>
+
+
+logback.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <logger name="jdbc.sqlonly" level="DEBUG" />
+    <logger name="jdbc.sqltiming" level="INFO" />
+    <logger name="jdbc.audit" level="WARN" />
+    <logger name="jdbc.resultset" level="ERROR" />
+    <logger name="jdbc.resultsettable" level="ERROR" />
+    <logger name="jdbc.connection" level="INFO" />
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-4level [%logger.%method:%line]-
+                %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <appender name="LOGFILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/WEB-INF/logback.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logback.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 30일 지난 파일은 삭제한다. -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-4level [%logger.%method:%line]
+                - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 로그의 레벨( 지정된 로그 레벨 이상만 수집 ) : DEBUG < INFO < WARN < ERROR < FATAL -->
+    <logger name="myweb" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="LOGFILE" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <root>
+        <level value="INFO" />
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
+
+
+log4jdbc.log4j2.properties
+log4jdbc.spylogdelegator.name=net.sf.log4jdbc.log.slf4j.Slf4jSpyLogDelegator
+
+
+
+
+5) kr.ed.haebeop.config.SecurityConfig.java 작성
+package kr.ed.haebeop.config;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@EnableWebSecurity
+public class SecurityConfig {
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+
+
+
+
+6) kr.ed.haebeop.config.RootConfig.java 작성
+package kr.ed.haebeop.config;
+//applicationContext.xml을 대신하는 RootConfig.java
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import javax.sql.DataSource;
+//applicationContext.xml을 대신하는 RootConfig.java : kr.ed.haebeop.config
+@Configuration
+@ComponentScan(basePackages = {"kr.ed.haebeop.service" , "kr.ed.haebeop.repository"})
+@MapperScan( basePackages = {"kr.ed.haebeop.persistence"}) // MyBatis-Spring
+public class RootConfig {
+    @Autowired
+    private ApplicationContext applicationContext;
+    @Bean
+    public SqlSessionTemplate sqlSession(SqlSessionFactory sqlSessionFactory) throws Exception {   //SqlSession 설정
+        return new SqlSessionTemplate(sqlSessionFactory);
+    }
+    @Bean
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception { //SqlFactory 설정
+        SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
+        sqlSessionFactory.setConfigLocation(applicationContext.getResource("classpath:/mybatis-config.xml"));
+        sqlSessionFactory.setMapperLocations(applicationContext.getResources("classpath*:/mappers/**/*Mapper.xml"));
+        sqlSessionFactory.setDataSource(dataSource());
+        return (SqlSessionFactory) sqlSessionFactory.getObject();
+    }
+    @Bean
+    public DataSourceTransactionManager transactionManager() {  //트랜잭션 설정
+        DataSourceTransactionManager transaction = new DataSourceTransactionManager();
+        transaction.setDataSource(dataSource());
+        return transaction;
+    }
+    @Bean
+    public BasicDataSource dataSource() {   //데이터베이스 설정
+        BasicDataSource basicDataSource = new BasicDataSource();
+        basicDataSource.setDriverClassName("org.mariadb.jdbc.Driver");
+        basicDataSource.setUrl("jdbc:mariadb://localhost:3306/haebeop");
+        basicDataSource.setUsername("root");
+        basicDataSource.setPassword("1234");
+        return basicDataSource;
+    }
+    @Bean
+    public CommonsMultipartResolver multipartResolver() {   //멀티파트 파일 업로드 설정
+        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
+        commonsMultipartResolver.setMaxUploadSize(100000000);
+        commonsMultipartResolver.setMaxInMemorySize(100000000);
+        return commonsMultipartResolver;
+    }
+
+    //HikariCP 를 활용하는 방안은 가장 밖에 있는 RootConfig2.java 파일을 참조할 것.
+}
+
+
+
+
+7) resources/mybatis-config.xml 작성
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC
+        "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+        <package name="kr.ed.haebeop" />
+    </typeAliases>
+</configuration>
+
+
+
+
+8) resources/mappers/testMapper.xml 작성
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="test">
+    <select id="getTestList" resultType="kr.ed.haebeop.domain.Test">
+        SELECT * FROM test
+    </select>
+    <select id="getTest" resultType="kr.ed.haebeop.domain.Test">
+        SELECT * FROM test WHERE num = #{num}
+    </select>
+    <insert id="insert">
+        INSERT into test (title) VALUES (#{title})
+    </insert>
+    <update id="update">
+        UPDATE test SET title = #{title} WHERE num = #{num}
+    </update>
+    <delete id="delete">
+        DELETE FROM test WHERE num = #{num}
+    </delete>
+</mapper>
+
+
+
+
+9) kr.ed.haebeop.domain.Test.java 작성
+package kr.ed.haebeop.domain;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Test {
+    private int num;
+    private String title;
+}
+
+
+
+
+10) 테이블 생성 : test 
+CREATE TABLE test(num INT AUTO_INCREMENT PRIMARY KEY,
+title VARCHAR(100) NOT NULL);
+
+INSERT INTO test VALUES (DEFAULT, '테스트제목1');
+INSERT INTO test VALUES (DEFAULT, '테스트제목2');
+INSERT INTO test VALUES (DEFAULT, '테스트제목3');
+INSERT INTO test VALUES (DEFAULT, '테스트제목4');
+INSERT INTO test VALUES (DEFAULT, '테스트제목5');
+
+
+
+11) kr.ed.haebeop.domain.repository.TestRepository.java(TestMapper.java) 작성
+package kr.ed.haebeop.repository;
+
+import kr.ed.haebeop.domain.Test;
+
+import java.util.List;
+
+public interface TestRepository {
+    public List<Test> getTestList();
+    public Test getTest(int num);
+    public void insert(Test test);
+    public void update(Test test);
+    public void delete(int num);
+}
+
+
+
+
+12) kr.ed.haebeop.domain.repository.TestRepositoryImpl.java(TestMapperImpl.java) 작성
+package kr.ed.haebeop.repository;
+
+import kr.ed.haebeop.domain.Test;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class TestRepositoryImpl implements TestRepository {
+
+    @Autowired
+    private SqlSession sqlSession;
+
+    @Override
+    public List<Test> getTestList() {
+        return sqlSession.selectList("test.getTestList");
+    }
+
+    @Override
+    public Test getTest(int num) {  return sqlSession.selectOne("test.getTest", num);  }
+
+    @Override
+    public void insert(Test test) { sqlSession.insert("test.insert", test); }
+
+    @Override
+    public void update(Test test) { sqlSession.update("test.update", test); }
+
+    @Override
+    public void delete(int num) { sqlSession.delete("test.delete", num); }
+}
+
+
+
+
+13) kr.ed.haebeop.domain.service.TestService.java 작성
+package kr.ed.haebeop.service;
+
+import kr.ed.haebeop.domain.Test;
+import kr.ed.haebeop.persistence.TestMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+public interface TestService {
+    public List<Test> getTestList();
+    public List<Test> getTestList2();
+    public List<Test> getTestList3();
+    public Test getTest(int num);
+    public Test getTest2(int num);
+    public Test getTest3(int num);
+    public void insert(Test test);
+    public void insert2(Test test);
+    public void insert3(Test test);
+    public void update(Test test);
+    public void update2(Test test);
+    public void update3(Test test);
+    public void delete(int num);
+    public void delete2(int num);
+    public void delete3(int num);
+}
+
+
+
+
+14) kr.ed.haebeop.domain.service.TestServiceImpl.java 작성
+package kr.ed.haebeop.service;
+
+import kr.ed.haebeop.domain.Test;
+import kr.ed.haebeop.persistence.TestMapper;
+import kr.ed.haebeop.persistence.TestMapper2;
+import kr.ed.haebeop.repository.TestRepository;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class TestServiceImpl implements TestService {
+
+    @Autowired
+    private TestRepository testRepository;
+
+    @Autowired
+    private TestMapper testMapper;
+
+    @Autowired
+    private TestMapper2 testMapper2;
+
+    @Override
+    public List<Test> getTestList(){
+        return testRepository.getTestList();
+    }
+
+    @Override
+    public List<Test> getTestList2() {
+        return testMapper.getTestList2();
+    }
+
+    @Override
+    public List<Test> getTestList3() {
+        return testMapper2.getTestList3();
+    }
+
+    @Override
+    public Test getTest(int num) {
+        return testRepository.getTest(num);
+    }
+
+    @Override
+    public Test getTest2(int num) {
+        return testMapper.getTest2(num);
+    }
+
+    @Override
+    public Test getTest3(int num) {
+        return testMapper2.getTest3(num);
+    }
+
+    @Override
+    public void insert(Test test) {
+        testRepository.insert(test);
+    }
+
+    @Override
+    public void insert2(Test test) {
+        testMapper.insert2(test);
+    }
+
+    @Override
+    public void insert3(Test test) {
+        testMapper2.insert3(test);
+    }
+
+    @Override
+    public void update(Test test) {
+        testRepository.update(test);
+    }
+
+    @Override
+    public void update2(Test test) {
+        testMapper.update2(test);
+    }
+
+    @Override
+    public void update3(Test test) {
+        testMapper2.update3(test);
+    }
+
+    @Override
+    public void delete(int num) {
+        testRepository.delete(num);
+    }
+
+    @Override
+    public void delete2(int num) {
+        testMapper.delete2(num);
+    }
+
+    @Override
+    public void delete3(int num) {
+        testMapper2.delete3(num);
+    }
+}
+
+
+
+
+
+15) kr.ed.haebeop.config.ApplicationConfig.java 를 생성하고 그 안에 TestRepository와 TestService를 Bean으로 등록 
+
+package kr.ed.haebeop.config;
+//주입 설정 및 빈 등록 파일 : ApplicationConfig.java
+import kr.ed.haebeop.persistence.TestMapper;
+import kr.ed.haebeop.persistence.TestMapperImpl;
+import kr.ed.haebeop.repository.TestRepository;
+import kr.ed.haebeop.repository.TestRepositoryImpl;
+import kr.ed.haebeop.service.TestService;
+import kr.ed.haebeop.service.TestServiceImpl;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ComponentScan;
+
+//컨트롤러나 서비스, 맴퍼, 레포시토리에서 사용할 Bean을 등록
+@Configuration
+@ComponentScan(basePackages = "kr.ed.haebeop")
+public class ApplicationConfig {
+    @Bean
+    public TestService testService(){ return new TestServiceImpl(); }
+    @Bean
+    public TestRepository testRepository(){ return new TestRepositoryImpl(); }
+}
+
+
+
+
+
+16) kr.ed.haebeop.controller.TestController.java 작성
+package kr.ed.haebeop.controller;
+
+import kr.ed.haebeop.domain.Test;
+import kr.ed.haebeop.service.TestService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/test/")
+public class TestController {
+    @Autowired
+    private TestService testService;
+
+    @GetMapping("getTestList")
+    public String getTestList(Model model) {
+        List<Test> testList = testService.getTestList();
+        model.addAttribute("testList", testList);
+        return "/test/getTestList";
+    }
+
+    @GetMapping("getTestList2")
+    public String getTestList2(Model model) {
+        List<Test> testList = testService.getTestList2();
+        model.addAttribute("testList", testList);
+        return "/test/getTestList";
+    }
+
+    @GetMapping("getTestList3")
+    public String getTestList3(Model model) {
+        List<Test> testList = testService.getTestList3();
+        model.addAttribute("testList", testList);
+        return "/test/getTestList";
+    }
+
+    //ModelAndView로 리턴하여 진행하는 경우
+    //ModelAndView mav = new ModelAndView("/test/getTestList");
+    //mav.addObject("testList", testList);
+    //return mav;
+}
+
+
+
+
+
+17) /WEB-INF/views/test 디렉토리에 getTestList.jsp, getTest.jsp, insertForm.jsp, updateForm.jsp 등을 작성
+
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
+ language="java" isELIgnored="false"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri = "http://java.sun.com/jsp/jstl/functions"%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test List</title>
+</head>
+<body>
+<c:forEach var="test" items="${testList}">
+    <p>${test.num}</p>
+    <p>${test.title}</p>
+    <hr>
+</c:forEach>
+</body>
+</html>
+
