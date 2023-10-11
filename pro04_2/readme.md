@@ -1,4 +1,5 @@
 1) 데이터베이스에서 member 테이블 작성
+```sql
 CREATE TABLE member(
     id VARCHAR(20) PRIMARY KEY, pw VARCHAR(350) NOT NULL,
     name VARCHAR(50) NOT NULL, email VARCHAR(150),
@@ -9,10 +10,11 @@ CREATE TABLE member(
     pt INT DEFAULT 0,
     visited INT DEFAULT 0
 );
-
+```
 
 
 2) kr.ed.haebeop.domain.Member.java 클래스 작성
+```java
 package kr.ed.haebeop.domain;
 
 import lombok.AllArgsConstructor;
@@ -36,10 +38,11 @@ public class Member {
     private int pt;
     private int visited;
 }
-
+```
 
 
 3) kr.ed.haebeop.persistence.MemberMapper.java 인터페이스 작성
+```java
 package kr.ed.haebeop.persistence;
 
 import kr.ed.haebeop.domain.Member;
@@ -78,11 +81,12 @@ public interface MemberMapper {
     @Select("SELECT * FROM member WHERE id = #{id}")
     public Member loginAjax(Member member);
 }
-
+```
 
 
 
 4) kr.ed.haebeop.service.MemberService.java 인터페이스 작성
+```java
 package kr.ed.haebeop.service;
 
 import kr.ed.haebeop.domain.Member;
@@ -100,10 +104,11 @@ public interface MemberService {
     public boolean loginCheck(String id, String pw) throws Exception;
     public Member loginAjax(Member member) throws Exception;
 }
-
+```
 
 
 5) kr.ed.haebeop.service.MemberServiceImpl.java 클래스 작성
+```java
 package kr.ed.haebeop.service;
 
 import kr.ed.haebeop.domain.Member;
@@ -178,9 +183,12 @@ public class MemberServiceImpl implements MemberService {
         return memberMapper.loginAjax(member);
     }
 }
+```
+
 
 
 6) kr.ed.haebeop.service.MemberController.java 클래스 작성
+```java
 package kr.ed.haebeop.controller;
 
 import org.json.JSONObject;
@@ -355,9 +363,11 @@ public class MemberController {
         }
     }
 }
+```
 
 
 7) /webapp/WEB-INF/views/include/hd.jsp 작성
+```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
@@ -417,10 +427,11 @@ public class MemberController {
         </ul>
     </nav>
 </header>
-
+```
 
 
 8) /webapp/WEB-INF/views/include/ft.jsp 작성
+```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
@@ -454,10 +465,11 @@ public class MemberController {
             </div>
         </div></article>
 </footer>
-
+```
 
 
 9) /webapp/WEB-INF/views/include/head.jsp 작성
+```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
@@ -507,10 +519,11 @@ public class HomeController {
         return "/index";
     }
 }
-
+```
 
 
 11) /webapp/WEB-INF/views/member/agree.jsp 작성
+```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
@@ -1493,9 +1506,10 @@ public class HomeController {
 </div>
 </body>
 </html>
-
+```
 
 12) /webapp/WEB-INF/views/member/loginForm.jsp 작성
+```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
@@ -1603,10 +1617,11 @@ public class HomeController {
 </div>
 </body>
 </html>
-
+```
 
 
 13) /webapp/WEB-INF/views/member/memberDetail.jsp 작성
+```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
@@ -1778,11 +1793,12 @@ public class HomeController {
 </div>
 </body>
 </html>
-
+```
 
 
 
 14) /webapp/WEB-INF/views/member/memberInsert.jsp 작성
+```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
@@ -1999,11 +2015,12 @@ public class HomeController {
 </div>
 </body>
 </html>
-
+```
 
 
 
 15) /webapp/WEB-INF/views/member/memberList.jsp 작성
+```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
@@ -2106,11 +2123,12 @@ public class HomeController {
 </div>
 </body>
 </html>
-
+```
 
 
 
 16) /webapp/WEB-INF/views/member/mypage.jsp 작성
+```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
@@ -2280,10 +2298,11 @@ public class HomeController {
 </div>
 </body>
 </html>
-
+```
 
 
 17) kr.ed.haebeop.config.ApplicationConfig.java 빈(Bean) 등록
+```java
 package kr.ed.haebeop.config;
 //주입 설정 및 빈 등록 파일 : ApplicationConfig.java
 import kr.ed.haebeop.repository.TestRepository;
@@ -2307,6 +2326,7 @@ public class ApplicationConfig {
     @Bean
     public MemberService memberService(){ return new MemberServiceImpl(); }
 }
+```
 
 
 

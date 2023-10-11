@@ -1,9 +1,9 @@
 package kr.ed.haebeop.config;
 //주입 설정 및 빈 등록 파일 : ApplicationConfig.java
-import kr.ed.haebeop.persistence.TestMapper;
-import kr.ed.haebeop.persistence.TestMapperImpl;
 import kr.ed.haebeop.repository.TestRepository;
 import kr.ed.haebeop.repository.TestRepositoryImpl;
+import kr.ed.haebeop.service.MemberService;
+import kr.ed.haebeop.service.MemberServiceImpl;
 import kr.ed.haebeop.service.TestService;
 import kr.ed.haebeop.service.TestServiceImpl;
 import org.springframework.context.annotation.Bean;
@@ -18,4 +18,6 @@ public class ApplicationConfig {
     public TestService testService(){ return new TestServiceImpl(); }
     @Bean
     public TestRepository testRepository(){ return new TestRepositoryImpl(); }
+    @Bean
+    public MemberService memberService(){ return new MemberServiceImpl(); }
 }
