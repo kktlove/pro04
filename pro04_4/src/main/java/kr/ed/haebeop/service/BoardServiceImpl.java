@@ -24,4 +24,39 @@ public class BoardServiceImpl implements BoardService {
         List<Board> boardList = boardMapper.getBoardList2(offset, size, field, query);
         return boardList;
     }
+
+    @Override
+    public int totalCount() {
+        return boardMapper.totalCount();
+    }
+
+    @Override
+    public int searchCount(String field, String query) {
+        return boardMapper.searchCount(field, query);
+    }
+
+    @Override
+    public Board getBoard(int bno) {
+        return boardMapper.getBoard(bno);
+    }
+
+    @Override
+    public void updateVisitedCount(int bno) {
+        boardMapper.updateVisitedCount(bno);
+    }
+
+    @Override
+    public void boardUpDate(Board board) {
+        boardMapper.boardUpDate(board);
+    }
+
+    @Override
+    public void boardDelete(int bno) {
+        boardMapper.boardDelete(bno);
+    }
+
+    @Override
+    public void boardInsert(Board board) {
+        boardMapper.boardInsert(board);
+    }
 }

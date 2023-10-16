@@ -30,4 +30,7 @@ h2.title { text-align: center; }
 .form-check { width:960px; margin:20px auto; text-align: center; }
 .breadcrumbs { border-top:5px solid #f0f0f0; border-bottom:5px solid #f0f0f0; padding-top:12px; padding-bottom:12px; background:#f0f0f0; padding-left:24px; }
 form { width:1280px; margin:20px auto; }
+.inner-table { width:800px; margin:20px auto; }
+.tb_pagenation { width:300px; margin:20px auto; }
+.curpage { display:inline-block; width:38px; height:38px; text-align:center; line-height:38px; border-radius:20px; background-color:#3c3c3c; color:#fff; }
 </style>

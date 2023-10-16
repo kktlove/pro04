@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공지사항 목록</title>
+    <title>공지사항 등록하기</title>
     <jsp:include page="../include/head.jsp"></jsp:include>
 </head>
 <body>
@@ -49,70 +49,33 @@
             <li><a href="#">Home</a></li>
             <li><a href="#">Board</a></li>
             <li>
-                <span class="show-for-sr">Current: </span> Board List
+                <span class="show-for-sr">Current: </span> Board Insert
             </li>
         </ul>
     </nav>
-    <form action="${path1}/board/list2.do" method="post">
-        <table>
+    <form action="${path1}/board/insert.do" method="post">
+        <h2>글 쓰기</h2>
+        <table class="inner-table">
             <tbody>
                 <tr>
-                    <td>
-                        <input type="hidden" id="curpage" name="curpage" value="${page.curpage}">
-                        <select id="field" name="field" required>
-                            <option value="">선택안함</option>
-                            <option value="title">제목</option>
-                            <option value="content">내용</option>
-                        </select>
-                    </td>
-                    <td><input type="text" id="query" name="query" placeholder="검색어 입력" required></td>
-                    <td><input type="submit" id="searchBtn" value="검색" class="button"></td>
+                    <th>글 제목</th>
+                    <td><input type="text" id="title" name="title" required></td>
+                </tr>
+                <tr>
+                    <th>글 내용</th>
+                    <td><textarea id="content" name="content" required></textarea></td>
                 </tr>
             </tbody>
         </table>
+        <table class="tb_pagenation">
+            <tr>
+                <td><a href="${path1}/board/list.do?curpage=1" class="button">글 목록</a></td>
+                <c:if test="${sid.equals('admin')}">
+                    <td><input type="submit" class="button" value="글 등록"></td>
+                </c:if>
+            </tr>
+        </table>
     </form>
-    <table class="inner-table">
-        <thead>
-            <tr>
-                <th>연번</th><th>제목</th><th>작성일</th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:forEach var="board" items="${boardList}">
-                <tr>
-                    <td>${board.bno}</td>
-                    <td><a href="${path1}/board/get.do?bno=${board.bno}">${board.title}</a></td>
-                    <td>${board.regdate}</td>
-                </tr>
-            </c:forEach>
-        <c:if test="${empty boardList}">
-            <tr>
-                <td colspan="3">게시판 글이 존재하지 않습니다.</td>
-            </tr>
-        </c:if>
-        </tbody>
-    </table>
-    <table class="tb_pagenation">
-        <tbody>
-            <tr>
-                <c:forEach var="i" begin="1" end="${page.pageCount}" step="1">
-                    <c:if test="${page.curpage eq i}">
-                        <td><span class="curpage">${i}</span></td>
-                    </c:if>
-                    <c:if test="${page.curpage!=i}">
-                        <td><a href="${path1}/board/list.do?curpage=${i}">[${i}]</a></td>
-                    </c:if>
-                </c:forEach>
-            </tr>
-        </tbody>
-    </table>
-    <table class="tb_pagenation">
-        <tr>
-            <c:if test="${sid.equals('admin')}">
-                <td><a href="${path1 }/board/insert.do" class="button">글 추가</a></td>
-            </c:if>
-        </tr>
-    </table>
     <!-- 푸터 부분 인클루드 -->
     <jsp:include page="../include/ft.jsp"></jsp:include>
 </div>
