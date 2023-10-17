@@ -44,75 +44,84 @@
             <button data-slide="3" class="is-active"><span class="show-for-sr">Fourth slide details.</span><span class="show-for-sr">Current Slide</span></button>
         </nav>
     </div>
-    <nav aria-label="You are here:" role="navigation">
-        <ul class="breadcrumbs">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Board</a></li>
-            <li>
-                <span class="show-for-sr">Current: </span> Board List
-            </li>
-        </ul>
-    </nav>
-    <form action="${path1}/board/list2.do" method="post">
-        <table>
-            <tbody>
+    <div class="contents">
+        <nav aria-label="You are here:" role="navigation">
+            <ul class="breadcrumbs">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Board</a></li>
+                <li>
+                    <span class="show-for-sr">Current: </span> Board List
+                </li>
+            </ul>
+        </nav>
+        <form action="${path1}/board/list2.do" method="post">
+            <h2 class="title">글 목록</h2>
+            <hr>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="hidden" id="curpage" name="curpage" value="${page.curpage}">
+                            <select id="field" name="field" required>
+                                <option value="">선택안함</option>
+                                <option value="title">제목</option>
+                                <option value="content">내용</option>
+                            </select>
+                        </td>
+                        <td><input type="text" id="query" name="query" placeholder="검색어 입력" required></td>
+                        <td><input type="submit" id="searchBtn" value="검색" class="button"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        <table class="inner-table">
+            <thead>
                 <tr>
-                    <td>
-                        <input type="hidden" id="curpage" name="curpage" value="${page.curpage}">
-                        <select id="field" name="field" required>
-                            <option value="">선택안함</option>
-                            <option value="title">제목</option>
-                            <option value="content">내용</option>
-                        </select>
-                    </td>
-                    <td><input type="text" id="query" name="query" placeholder="검색어 입력" required></td>
-                    <td><input type="submit" id="searchBtn" value="검색" class="button"></td>
+                    <th>연번</th><th>제목</th><th>작성일</th>
                 </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="board" items="${boardList}">
+                    <tr>
+                        <td>${board.bno}</td>
+                        <td><a href="${path1}/board/get.do?bno=${board.bno}">${board.title}</a></td>
+                        <td>${board.regdate}</td>
+                    </tr>
+                </c:forEach>
+            <c:if test="${empty boardList}">
+                <tr>
+                    <td colspan="3">게시판 글이 존재하지 않습니다.</td>
+                </tr>
+            </c:if>
             </tbody>
         </table>
-    </form>
-    <table class="inner-table">
-        <thead>
-            <tr>
-                <th>연번</th><th>제목</th><th>작성일</th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:forEach var="board" items="${boardList}">
-                <tr>
-                    <td>${board.bno}</td>
-                    <td><a href="${path1}/board/get.do?bno=${board.bno}">${board.title}</a></td>
-                    <td>${board.regdate}</td>
-                </tr>
-            </c:forEach>
-        <c:if test="${empty boardList}">
-            <tr>
-                <td colspan="3">게시판 글이 존재하지 않습니다.</td>
-            </tr>
-        </c:if>
-        </tbody>
-    </table>
-    <table class="tb_pagenation">
-        <tbody>
-            <tr>
+        <div class="pagination-centered">
+            <ul class="pagination" style="width:230px;margin:10px auto;">
                 <c:forEach var="i" begin="1" end="${page.pageCount}" step="1">
-                    <c:if test="${page.curpage eq i}">
-                        <td><span class="curpage">${i}</span></td>
+                    <c:if test="${page.curpage>=6}">
+                        <li class="arrow unavailable" aria-disabled="true"><a href="">&laquo; Previous</a></li>
                     </c:if>
-                    <c:if test="${page.curpage!=i}">
-                        <td><a href="${path1}/board/list.do?curpage=${i}">[${i}]</a></td>
+                    <c:if test="${page.curpage eq i}">
+                        <li class="current"><span>${i}</span></li>
+                    </c:if>
+                    <c:if test="${page.curpage!=i and (empty query)}">
+                        <li><a href="${path1}/board/list.do?curpage=${i}">${i}</a></li>
+                    </c:if>
+                    <c:if test="${page.curpage!=i and !(empty query)}">
+                        <li><a href="${path1}/board/list2.do?curpage=${i}&field=${field}&query=${query}">${i}</a></li>
+                    </c:if>
+                    <c:if test="${page.pageCount>=6}">
+                        <li class="arrow"><a href="">Next &raquo;</a></li>
                     </c:if>
                 </c:forEach>
-            </tr>
-        </tbody>
-    </table>
-    <table class="tb_pagenation">
-        <tr>
+            </ul>
+        </div>
+        <ul class="button-group" style="list-style:none;width:100px;margin:10px auto;">
             <c:if test="${sid.equals('admin')}">
-                <td><a href="${path1 }/board/insert.do" class="button">글 추가</a></td>
+                <li><a href="${path1 }/board/insert.do" class="button">글 추가</a></li>
             </c:if>
-        </tr>
-    </table>
+        </ul>
+    </div>
     <!-- 푸터 부분 인클루드 -->
     <jsp:include page="../include/ft.jsp"></jsp:include>
 </div>

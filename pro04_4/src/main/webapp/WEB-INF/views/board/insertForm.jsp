@@ -44,38 +44,39 @@
             <button data-slide="3" class="is-active"><span class="show-for-sr">Fourth slide details.</span><span class="show-for-sr">Current Slide</span></button>
         </nav>
     </div>
-    <nav aria-label="You are here:" role="navigation">
-        <ul class="breadcrumbs">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Board</a></li>
-            <li>
-                <span class="show-for-sr">Current: </span> Board Insert
-            </li>
-        </ul>
-    </nav>
-    <form action="${path1}/board/insert.do" method="post">
-        <h2>글 쓰기</h2>
-        <table class="inner-table">
-            <tbody>
-                <tr>
-                    <th>글 제목</th>
-                    <td><input type="text" id="title" name="title" required></td>
-                </tr>
-                <tr>
-                    <th>글 내용</th>
-                    <td><textarea id="content" name="content" required></textarea></td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="tb_pagenation">
-            <tr>
-                <td><a href="${path1}/board/list.do?curpage=1" class="button">글 목록</a></td>
+    <div class="contents"></div>
+        <nav aria-label="You are here:" role="navigation">
+            <ul class="breadcrumbs">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Board</a></li>
+                <li>
+                    <span class="show-for-sr">Current: </span> Board Insert
+                </li>
+            </ul>
+        </nav>
+        <form action="${path1}/board/insert.do" method="post">
+            <h2 class="title">글 쓰기</h2>
+            <hr>
+            <table class="inner-table">
+                <tbody>
+                    <tr>
+                        <th>글 제목</th>
+                        <td><input type="text" id="title" name="title" required></td>
+                    </tr>
+                    <tr>
+                        <th>글 내용</th>
+                        <td><textarea id="content" name="content" required></textarea></td>
+                    </tr>
+                </tbody>
+            </table>
+            <ul class="button-group" style="list-style:none;width:180px;margin:10px auto;">
+                <li><a href="${path1}/board/list.do?curpage=1" class="button">글 목록</a></li>
                 <c:if test="${sid.equals('admin')}">
-                    <td><input type="submit" class="button" value="글 등록"></td>
+                    <li><input type="submit" class="button" value="글 등록"></li>
                 </c:if>
-            </tr>
-        </table>
-    </form>
+            </ul>
+        </form>
+    </div>
     <!-- 푸터 부분 인클루드 -->
     <jsp:include page="../include/ft.jsp"></jsp:include>
 </div>

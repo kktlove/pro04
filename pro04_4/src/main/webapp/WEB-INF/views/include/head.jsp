@@ -10,7 +10,7 @@
 <!-- 기타 설정 -->
 <!-- 폰트 -->
 <script src="https://code.jquery.com/jquery-latest.js"></script>
-<link rel="stylesheet" href="resources/css/normalize.css" />
+<link rel="stylesheet" href="${path0}/resources/css/normalize.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/motion-ui/1.2.3/motion-ui.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation-prototype.min.css">
@@ -33,4 +33,5 @@ form { width:1280px; margin:20px auto; }
 .inner-table { width:800px; margin:20px auto; }
 .tb_pagenation { width:300px; margin:20px auto; }
 .curpage { display:inline-block; width:38px; height:38px; text-align:center; line-height:38px; border-radius:20px; background-color:#3c3c3c; color:#fff; }
+.contents { min-height:55vw;}
 </style>

@@ -44,53 +44,55 @@
             <button data-slide="3" class="is-active"><span class="show-for-sr">Fourth slide details.</span><span class="show-for-sr">Current Slide</span></button>
         </nav>
     </div>
-    <nav aria-label="You are here:" role="navigation">
-        <ul class="breadcrumbs">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Board</a></li>
-            <li>
-                <span class="show-for-sr">Current: </span> Board Update
-            </li>
-        </ul>
-    </nav>
-    <form action="${path1}/board/update.do" method="post">
-        <table class="inner-table">
-            <tbody>
-                <tr>
-                    <th>글 번호</th>
-                    <td>
-                        <input type="hidden" id="bno" name="bno" value="${board.bno}">
-                        ${board.bno}
-                    </td>
-                </tr>
-                <tr>
-                    <th>글 제목</th>
-                    <td><input type="text" id="title" name="title" value="${board.title}" required></td>
-                </tr>
-                <tr>
-                    <th>글 내용</th>
-                    <td><textarea id="content" name="content" required>${board.content}</textarea></td>
-                </tr>
-                <tr>
-                    <th>작성일시</th>
-                    <td>${board.regdate}</td>
-                </tr>
-                <tr>
-                    <th>읽은 횟수</th>
-                    <td>${board.visited}</td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="tb_pagenation">
-            <tr>
-                <td><a href="${path1}/board/list.do?curpage=1" class="button">글 목록</a></td>
+    <div class="contents">
+        <nav aria-label="You are here:" role="navigation">
+            <ul class="breadcrumbs">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Board</a></li>
+                <li>
+                    <span class="show-for-sr">Current: </span> Board Update
+                </li>
+            </ul>
+        </nav>
+        <form action="${path1}/board/update.do" method="post">
+            <h2 class="title">글 수정</h2>
+            <hr>
+            <table class="inner-table">
+                <tbody>
+                    <tr>
+                        <th>글 번호</th>
+                        <td>
+                            <input type="hidden" id="bno" name="bno" value="${board.bno}">
+                            ${board.bno}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>글 제목</th>
+                        <td><input type="text" id="title" name="title" value="${board.title}" required></td>
+                    </tr>
+                    <tr>
+                        <th>글 내용</th>
+                        <td><textarea id="content" name="content" required>${board.content}</textarea></td>
+                    </tr>
+                    <tr>
+                        <th>작성일시</th>
+                        <td>${board.regdate}</td>
+                    </tr>
+                    <tr>
+                        <th>읽은 횟수</th>
+                        <td>${board.visited}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <ul class="button-group" style="list-style:none;width:270px;margin:10px auto;">
+                <li><a href="${path1}/board/list.do?curpage=1" class="button">글 목록</a></li>
                 <c:if test="${sid.equals('admin')}">
-                    <td><input type="submit" class="button" value="글 수정"></td>
-                    <td><a href="${path1 }/board/delete.do?bno=${board.bno}" class="button">글 삭제</a></td>
+                    <li><input type="submit" class="button" value="글 수정"></li>
+                    <li><a href="${path1 }/board/delete.do?bno=${board.bno}" class="button">글 삭제</a></li>
                 </c:if>
-            </tr>
-        </table>
-    </form>
+            </ul>
+        </form>
+    </div>
     <!-- 푸터 부분 인클루드 -->
     <jsp:include page="../include/ft.jsp"></jsp:include>
 </div>

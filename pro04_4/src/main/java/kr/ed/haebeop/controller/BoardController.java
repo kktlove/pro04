@@ -42,6 +42,22 @@ public class BoardController {
         List<Board> boardList = boardService.getBoardList2(page.getOffset(), page.getSize(), field, query);
         int total = boardService.searchCount(field, query);
         page.ComputePage(total);
+        model.addAttribute("field", field);
+        model.addAttribute("query", query);
+        model.addAttribute("page", page);
+        model.addAttribute("boardList", boardList);
+        return "/board/list";
+    }
+
+    @GetMapping("list2.do")  //
+    public String getBoardList3(@RequestParam("curpage") int curpage, @RequestParam("field") String field, @RequestParam("query") String query, Model model){
+        Page page = new Page();
+        page.generateOffset(curpage, 5);
+        List<Board> boardList = boardService.getBoardList2(page.getOffset(), page.getSize(), field, query);
+        int total = boardService.searchCount(field, query);
+        page.ComputePage(total);
+        model.addAttribute("field", field);
+        model.addAttribute("query", query);
         model.addAttribute("page", page);
         model.addAttribute("boardList", boardList);
         return "/board/list";
