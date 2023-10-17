@@ -63,6 +63,20 @@ INSERT INTO board VALUES (DEFAULT, '제목12', '내용12', DEFAULT, DEFAULT);
 COMMIT;
 
 SELECT * FROM board ORDER BY regdate DESC LIMIT 0, 5;
+
+-- 자유게시판(순번, 제목, 내용, 작성일시, 조회수, 작성자, 추천수)
+create table free(bno INT AUTO_INCREMENT PRIMARY KEY,  
+title VARCHAR(100) not null,   
+content VARCHAR(2000) not null,    
+regdate DATETIME DEFAULT CURRENT_TIMESTAMP(),   
+visited INT DEFAULT 0,    
+author VARCHAR(20),    
+rec INT DEFAULT 0
+);
+
+DESC free;
+
+DROP TABLE free;
 -- 자료실(순번, 제목, 내용, 자료파일1, 자료파일2, 자료파일3, 작성일, 작성자, 읽은 횟수)
 
 -- 과목(과목코드, 과목명, 과목단가)

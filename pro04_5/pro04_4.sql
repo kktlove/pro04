@@ -43,8 +43,6 @@ content VARCHAR(1000) NOT NULL,
 regdate DATETIME DEFAULT CURRENT_TIMESTAMP,
 visited INT DEFAULT 0);
 
-DROP table board;
-
 DESC board;
 
 INSERT INTO board VALUES (DEFAULT, '제목1', '내용1', DEFAULT, DEFAULT);

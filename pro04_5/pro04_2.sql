@@ -30,39 +30,13 @@ CREATE TABLE member(
     visited INT DEFAULT 0
 );
 
-DESC MEMBER;
 -- 핵심 기능 : 공지사항, 자료실, 회원, 자유게시판, 강의별 댓글, 교재와 시범강의
 -- 부가 기능 : 파일업로드, 채팅 및 쪽지, 타계정 또는 SNS로 로그인, 수강평, 달력,
 -- 가입시 축하 이메일 보내기, 비밀번호 변경시 이메일 보내기, 온라인 평가,
 -- 진도관리, 학습 스케줄러, 나의 강의실 등
 
 -- 공지사항(순번, 제목, 내용, 작성일, 읽은횟수)
-CREATE TABLE board(bno int PRIMARY KEY AUTO_INCREMENT,
-title VARCHAR(200) NOT NULL,
-content VARCHAR(1000) NOT NULL,
-regdate DATETIME DEFAULT CURRENT_TIMESTAMP,
-visited INT DEFAULT 0);
 
-DROP table board;
-
-DESC board;
-
-INSERT INTO board VALUES (DEFAULT, '제목1', '내용1', DEFAULT, DEFAULT);
-INSERT INTO board VALUES (DEFAULT, '제목2', '내용2', DEFAULT, DEFAULT);
-INSERT INTO board VALUES (DEFAULT, '제목3', '내용3', DEFAULT, DEFAULT);
-INSERT INTO board VALUES (DEFAULT, '제목4', '내용4', DEFAULT, DEFAULT);
-INSERT INTO board VALUES (DEFAULT, '제목5', '내용5', DEFAULT, DEFAULT);
-INSERT INTO board VALUES (DEFAULT, '제목6', '내용6', DEFAULT, DEFAULT);
-INSERT INTO board VALUES (DEFAULT, '제목7', '내용7', DEFAULT, DEFAULT);
-INSERT INTO board VALUES (DEFAULT, '제목8', '내용8', DEFAULT, DEFAULT);
-INSERT INTO board VALUES (DEFAULT, '제목9', '내용9', DEFAULT, DEFAULT);
-INSERT INTO board VALUES (DEFAULT, '제목10', '내용10', DEFAULT, DEFAULT);
-INSERT INTO board VALUES (DEFAULT, '제목11', '내용11', DEFAULT, DEFAULT);
-INSERT INTO board VALUES (DEFAULT, '제목12', '내용12', DEFAULT, DEFAULT);
-
-COMMIT;
-
-SELECT * FROM board ORDER BY regdate DESC LIMIT 0, 5;
 -- 자료실(순번, 제목, 내용, 자료파일1, 자료파일2, 자료파일3, 작성일, 작성자, 읽은 횟수)
 
 -- 과목(과목코드, 과목명, 과목단가)
