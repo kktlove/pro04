@@ -8,7 +8,7 @@
 
 # 04_4. 스프링프레임워크 @Mapper SQL Annotation 를 활용한 board 기능 구현
 
-# 04_5. 스프링프레임워크 cleditor를 활용한 free board 와 비속어 필터링 기능 구현
+# 04_5. 스프링프레임워크 cleditor를 활용한 free board 와 비속어 필터링 기능 구현(Controller VS View의 메시지 전달, 업데이트카운트 중복 필터)
 
 # 04_6. 
 
