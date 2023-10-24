@@ -14,4 +14,6 @@
 
 # 04_7. 스프링프레임워크 Multipart Form 자료실 기능 구현
 
+# 04_8. 스프링프레임워크 Book Management 기능 구현
 
+# 04_9. 스프링프레임워크 Lecture Management 기능 구현
